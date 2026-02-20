@@ -1,28 +1,24 @@
-import dotenv from 'dotenv'
-import { GoogleGenAI } from "@google/genai";
-
-dotenv.config({
-    path: "./.env"
-});
-
-const ai = new GoogleGenAI({
-    apiKey: process.env.GEMINI_API_KEY,
-});
+import axios from "axios";
 
 export async function generateEmbedding(text) {
-    const response = await ai.models.embedContent({
-        model: "models/gemini-embedding-001",
-        contents: [
+    const response = await axios.post(
+        "https://openrouter.ai/api/v1/embeddings",
         {
-            role: "user",
-            parts: [{ text }]
+        model: "text-embedding-3-small",
+        input: text
+        },
+        {
+        headers: {
+            Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
+            "Content-Type": "application/json"
         }
-        ]
-    });
+        }
+    );
 
-    const embedding = response.embeddings[0].values;
-    if (embedding.length !== 3072) {
-    throw new Error(`Unexpected dimension: ${embedding.length}`);
+    const embedding = response.data.data[0].embedding;
+
+    if (!embedding) {
+        throw new Error("Embedding failed");
     }
 
     return embedding;

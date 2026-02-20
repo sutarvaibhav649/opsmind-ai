@@ -12,16 +12,6 @@ dotenv.config({ path: path.join(__dirname, '../.env') });
 
 const PORT = process.env.PORT || 5000;
 
-// Verify critical environment variables
-if (!process.env.GEMINI_API_KEY) {
-    console.error('❌ GEMINI_API_KEY is not set in environment');
-    process.exit(1);
-}
-
-if (!process.env.MONGODB_URI) {
-    console.error('❌ MONGODB_URI is not set in environment');
-    process.exit(1);
-}
 
 // Connect to Database
 connectDB().then(() => {
