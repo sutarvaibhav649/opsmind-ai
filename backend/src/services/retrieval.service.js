@@ -24,9 +24,15 @@ export async function retrieveTopChunks(query) {
         }
     ]);
 
-    if (!results.length || results[0].score < 0.70) {
+    
+
+    const topScore = results[0]?.score ?? 0;
+    const secondScore = results[1]?.score ?? 0;
+
+    if (!results.length || topScore < 0.65 || (topScore - secondScore < 0.01)) {
         return [];
     }
 
+    console.log("Retrieval results:", results);
     return results;
 }

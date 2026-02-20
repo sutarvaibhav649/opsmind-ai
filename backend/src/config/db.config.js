@@ -8,15 +8,6 @@ dns.setServers(['8.8.8.8', '1.1.1.1']);
 // Load environment variables
 dotenv.config({ path: './.env' });
 
-// Validate required environment variables
-const requiredEnvVars = ['MONGODB_URI', 'GEMINI_API_KEY'];
-requiredEnvVars.forEach(varName => {
-    if (!process.env[varName]) {
-        console.error(`❌ Missing required environment variable: ${varName}`);
-        process.exit(1);
-    }
-});
-
 const connectDB = async () => {
     try {
         const conn = await mongoose.connect(process.env.MONGODB_URI);

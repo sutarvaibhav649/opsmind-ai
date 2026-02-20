@@ -4,20 +4,22 @@ export async function generateAnswer(contextChunks, query) {
     const contextText = contextChunks.map(c => c.text).join("\n\n");
 
     const prompt = `
-            Answer ONLY using the provided context.
-            If the answer is not found, say "I don't know".
+            You are an internal knowledge assistant.
 
-            Context:
-            ${contextText}
+            Answer strictly using the provided context.
+            Do not use prior knowledge.
+            If the answer is not found explicitly in the context ${contextText}, say:
+            "I don't know based on the provided documents."
 
-            Question:
-            ${query}
+            Format your answer clearly using bullet points when listing items.
+            Be concise.
+            Question: ${query}
             `;
 
     const response = await axios.post(
         "https://openrouter.ai/api/v1/chat/completions",
         {
-        model: "google/gemini-2.5-flash",
+        model: "openai/gpt-4o-mini",
         messages: [
             { role: "user", content: prompt }
         ]
