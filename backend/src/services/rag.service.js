@@ -1,5 +1,5 @@
 import { retrieveTopChunks } from "./retrieval.service.js";
-import { generateAnswer } from "./llm.service.js";
+import { generateStreamingAnswer } from "./llm.service.js";
 
 export async function answerQuery(query) {
     const chunks = await retrieveTopChunks(query);
@@ -11,7 +11,7 @@ export async function answerQuery(query) {
         };
     }
 
-    const answer = await generateAnswer(chunks, query);
+    const answer = await generateStreamingAnswer(chunks, query);
 
     const uniqueCitations = [
         ...new Map(
