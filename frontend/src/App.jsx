@@ -1,9 +1,18 @@
-import React from 'react'
+import { Routes, Route, Navigate } from "react-router-dom";
+import AppLayout from "./layouts/AppLayout";
+import ChatPage from "./pages/ChatPage";
+import DashboardPage from "./pages/DashboardPage";
 
-const App = () => {
+function App() {
     return (
-        <div className=' text-red-400'>Hello</div>
-    )
+        <Routes>
+        <Route element={<AppLayout />}>
+            <Route path="/" element={<Navigate to="/chat" />} />
+            <Route path="/chat" element={<ChatPage />} />
+            <Route path="/dashboard" element={<DashboardPage />} />
+        </Route>
+        </Routes>
+    );
 }
 
-export default App
+export default App;
