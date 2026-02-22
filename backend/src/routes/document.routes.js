@@ -27,4 +27,13 @@ const uploadMiddleware = multer({
 
 router.post("/upload", uploadMiddleware.single("file"), upload);
 
+router.get("/all", async (req, res) => {
+    try {
+        const documents = await Document.find().sort({ createdAt: -1 });
+        res.json(documents);
+    } catch (err) {
+        res.status(500).json({ error: "Failed to fetch documents" });
+    }
+});
+
 export default router;
