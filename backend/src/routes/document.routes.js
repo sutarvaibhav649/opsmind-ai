@@ -2,6 +2,7 @@ import express from "express";
 import multer from "multer";
 import { upload } from "../controllers/document.controller.js";
 import Document from "../models/document.model.js";
+import { protect } from "../middleware/auth.middleware.js";
 
 const router = express.Router();
 
@@ -25,10 +26,10 @@ const uploadMiddleware = multer({
     }
 });
 
-router.post("/upload", uploadMiddleware.single("file"), upload);
+router.post("/upload",protect, uploadMiddleware.single("file"), upload);
 
 
-router.get("/all", async (req, res) => {
+router.get("/all",protect, async (req, res) => {
     try {
         const documents = await Document.find().sort({ createdAt: -1 });
         res.json(documents);

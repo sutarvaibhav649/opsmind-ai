@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import documentRoutes from "./routes/document.routes.js";
 import chatRoutes from "./routes/chat.routes.js";
+import authRoutes from "./routes/auth.routes.js";
 
 import dotenv from "dotenv";
 dotenv.config({
@@ -22,6 +23,7 @@ app.use(express.urlencoded({ extended: true }));
 // Routes
 app.use("/api/documents", documentRoutes);
 app.use("/api/chat", chatRoutes);
+app.use("/api/auth", authRoutes);
 
 // Error handler
 app.use((err, req, res, next) => {

@@ -3,6 +3,8 @@ export function chunkText(text, chunkSize = 1000, overlap = 200) {
     let start = 0;
     let index = 0;
 
+    console.log("Chunks found:", chunks.length);
+
     while (start < text.length) {
         const end = start + chunkSize;
 

@@ -1,6 +1,7 @@
 import express from "express";
 import { retrieveTopChunks } from "../services/retrieval.service.js";
 import { answerQuery } from "../services/rag.service.js";
+import { protect } from "../middleware/auth.middleware.js";
 
 const router = express.Router();
 
@@ -14,7 +15,7 @@ router.get("/test", async (req, res) => {
 
 import { generateStreamingAnswer } from "../services/llm.service.js";
 
-router.post("/query", async (req, res) => {
+router.post("/query",protect, async (req, res) => {
     res.setHeader("Content-Type", "text/event-stream");
     res.setHeader("Cache-Control", "no-cache");
     res.setHeader("Connection", "keep-alive");
