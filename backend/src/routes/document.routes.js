@@ -1,7 +1,7 @@
 import express from "express";
 import multer from "multer";
-import path from "path";
 import { upload } from "../controllers/document.controller.js";
+import Document from "../models/document.model.js";
 
 const router = express.Router();
 
@@ -26,6 +26,7 @@ const uploadMiddleware = multer({
 });
 
 router.post("/upload", uploadMiddleware.single("file"), upload);
+
 
 router.get("/all", async (req, res) => {
     try {

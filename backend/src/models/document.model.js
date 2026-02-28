@@ -5,13 +5,12 @@ const documentSchema = new mongoose.Schema({
     originalName: String,
     mimeType: String,
     size: Number,
-    uploadDate: { type: Date, default: Date.now },
     totalPages: Number,
     status: {
         type: String,
         enum: ["processing", "processed", "failed"],
         default: "processing"
     }
-});
+}, { timestamps: true });
 
 export default mongoose.model("Document", documentSchema);

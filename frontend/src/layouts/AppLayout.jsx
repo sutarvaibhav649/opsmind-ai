@@ -17,12 +17,10 @@ function AppLayout() {
         try {
             const docs = await getDocuments();
             const formatted = docs.map((doc) => ({
-            id: doc._id,
-            name: doc.fileName,
-            size: doc.fileSize
-                ? (doc.fileSize / 1024).toFixed(2) + " KB"
-                : "",
-            status: doc.status,
+                id: doc._id,
+                name: doc.originalName,
+                size: doc.size ? (doc.size / 1024).toFixed(2) + " KB" : "",
+                status: doc.status
             }));
             setUploadedFiles(formatted);
         } catch (err) {
