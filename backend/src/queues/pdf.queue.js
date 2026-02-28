@@ -1,6 +1,5 @@
 import { Queue, Worker } from "bullmq";
 import IORedis from "ioredis";
-
 import Document from "../models/document.model.js";
 import Chunk from "../models/chunk.model.js";
 import { extractText } from "../services/pdf.service.js";
@@ -13,46 +12,43 @@ const connection = new IORedis({
     maxRetriesPerRequest: null
 });
 
-export const pdfQueue = new Queue("pdf-processing", {
-    connection
-});
+export const pdfQueue = new Queue("pdf-processing", { connection });
 
 const worker = new Worker(
     "pdf-processing",
     async job => {
-        const { documentId, filePath, originalName } = job.data;
+        const { documentId, userId, filePath, originalName } = job.data;
 
         try {
-        const { text, totalPages } = await extractText(filePath);
+            // FIX: extractText now returns { pages: [{pageNumber, text}], totalPages }
+            const { pages, totalPages } = await extractText(filePath);
 
-        const chunks = chunkText(text);
+            // FIX: chunkText receives pages array, returns chunks with correct pageNumber
+            const chunks = chunkText(pages);
 
-        for (const chunk of chunks) {
-            const embedding = await generateEmbedding(chunk.text);
-            await Chunk.create({
-            documentId,
-            text: chunk.text,
-            chunkIndex: chunk.chunkIndex,
-            pageNumber: 1,
-            embedding,
-            metadata: { filename: originalName }
+            for (const chunk of chunks) {
+                const embedding = await generateEmbedding(chunk.text);
+                await Chunk.create({
+                    userId,
+                    documentId,
+                    text: chunk.text,
+                    chunkIndex: chunk.chunkIndex,
+                    pageNumber: chunk.pageNumber,   // FIX: was always hardcoded to 1
+                    embedding,
+                    metadata: { filename: originalName }
+                });
+            }
+
+            await Document.findByIdAndUpdate(documentId, {
+                status: "processed",
+                totalPages
             });
-        }
-
-        await Document.findByIdAndUpdate(documentId, {
-            status: "processed",
-            totalPages
-        });
 
         } catch (error) {
-        console.error("FULL WORKER ERROR:", error);
-        console.error("STACK:", error.stack);
-
-        await Document.findByIdAndUpdate(documentId, {
-            status: "failed"
-        });
-
-        throw error;
+            console.error("FULL WORKER ERROR:", error);
+            console.error("STACK:", error.stack);
+            await Document.findByIdAndUpdate(documentId, { status: "failed" });
+            throw error;
         }
     },
     { connection }

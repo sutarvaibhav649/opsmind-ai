@@ -1,20 +1,28 @@
-export function chunkText(text, chunkSize = 1000, overlap = 200) {
+export function chunkText(pages, chunkSize = 1000, overlap = 200) {
     const chunks = [];
-    let start = 0;
-    let index = 0;
+    let chunkIndex = 0;
 
-    console.log("Chunks found:", chunks.length);
+    for (const { pageNumber, text } of pages) {
+        if (!text.trim()) continue;   // skip blank pages
 
-    while (start < text.length) {
-        const end = start + chunkSize;
+        let start = 0;
 
-        chunks.push({
-        text: text.slice(start, end),
-        chunkIndex: index++
-        });
+        while (start < text.length) {
+            const end = start + chunkSize;
+            const chunkContent = text.slice(start, end).trim();
 
-        start += chunkSize - overlap;
+            if (chunkContent) {
+                chunks.push({
+                    text: chunkContent,
+                    chunkIndex: chunkIndex++,
+                    pageNumber   // ← correct page number for every chunk
+                });
+            }
+
+            start += chunkSize - overlap;
+        }
     }
 
+    console.log(`Chunks found: ${chunks.length}`);
     return chunks;
 }

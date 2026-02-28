@@ -12,14 +12,9 @@ export async function register(req, res) {
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
-
-        const user = await User.create({
-            email,
-            password: hashedPassword
-        });
+        await User.create({ email, password: hashedPassword });
 
         res.status(201).json({ message: "User registered successfully" });
-
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
@@ -40,17 +35,16 @@ export async function login(req, res) {
         }
 
         const token = jwt.sign(
-        { 
-            userId: user._id,
-            email: user.email,
-            role: user.role
-        },
-        process.env.JWT_SECRET,
-        { expiresIn: "7d" }
+            {
+                userId: user._id,
+                email: user.email,
+                role: user.role
+            },
+            process.env.JWT_SECRET,
+            { expiresIn: "7d" }
         );
 
         res.json({ token });
-
     } catch (err) {
         res.status(500).json({ error: err.message });
     }

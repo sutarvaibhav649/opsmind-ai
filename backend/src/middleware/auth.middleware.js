@@ -1,9 +1,8 @@
 import jwt from "jsonwebtoken";
-import dotenv from 'dotenv';
+import dotenv from "dotenv";
 
-dotenv.config({
-    path:"./.env"
-});
+dotenv.config({ path: "./.env" });
+
 export function protect(req, res, next) {
     const authHeader = req.headers.authorization;
 
