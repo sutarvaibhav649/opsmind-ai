@@ -10,7 +10,6 @@ function LoginPage() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
         const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/login`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -23,13 +22,13 @@ function LoginPage() {
             alert(data.error);
             return;
         }
+
         login(data.token);
         navigate("/chat");
     };
 
     return (
         <div className="min-h-screen bg-[#2c2c2c] text-white flex flex-col">
-            
             {/* Header */}
             <div className="p-4 text-sm font-semibold">
                 OpsMind-AI
@@ -44,7 +43,6 @@ function LoginPage() {
                     <h2 className="text-center text-lg font-semibold mb-2">
                         Sign In
                     </h2>
-
                     <div className="flex flex-col gap-2">
                         <label className="text-xs">Email</label>
                         <input
@@ -54,7 +52,6 @@ function LoginPage() {
                             onChange={(e) => setEmail(e.target.value)}
                         />
                     </div>
-
                     <div className="flex flex-col gap-2">
                         <label className="text-xs">Password</label>
                         <input
@@ -64,20 +61,16 @@ function LoginPage() {
                             onChange={(e) => setPassword(e.target.value)}
                         />
                     </div>
-
-                    <button
-                        className="mt-2 bg-[#6b6b6b] hover:bg-[#7c7c7c] transition rounded-md py-1 text-sm"
-                    >
+                    <button className="mt-2 bg-[#6b6b6b] hover:bg-[#7c7c7c] transition rounded-md py-1 text-sm">
                         Sign In
                     </button>
-
                     <p className="text-center text-xs mt-3">
-                        Don’t have an account?{" "}
+                        Don't have an account?{" "}
                         <span
                             onClick={() => navigate("/register")}
                             className="text-blue-400 cursor-pointer hover:underline"
                         >
-                            register
+                            Register
                         </span>
                     </p>
                 </form>

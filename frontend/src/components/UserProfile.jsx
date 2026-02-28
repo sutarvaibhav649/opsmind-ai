@@ -10,13 +10,11 @@ const UserProfile = () => {
                 <div className='h-8 w-8 rounded-full bg-white mr-3 overflow-hidden border border-black'>
                     <img src="/vite.svg" alt="User" className="w-full h-full object-cover" />
                 </div>
-
                 <p className='text-sm truncate'>
                     {user?.email || "Loading..."}
                 </p>
             </div>
-
-            <button 
+            <button
                 onClick={logout}
                 className='border border-white/50 py-1.5 px-4 rounded-lg transition-all text-sm w-full hover:bg-red-600/20'
             >

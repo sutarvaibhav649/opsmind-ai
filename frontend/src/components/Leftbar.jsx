@@ -9,9 +9,9 @@ const Leftbar = () => {
   return (
     <>
         <div className='flex flex-col'>
-           <button className='bg-blue-400 text-xs px-22 py-2 rounded-md'>NewChat</button>
-           <br />
-           <button className='bg-blue-400 text-xs px-22 py-2 rounded-md'>AllChats</button>
+          <button className='bg-blue-400 text-xs px-22 py-2 rounded-md'>NewChat</button>
+          <br />
+          <button className='bg-blue-400 text-xs px-22 py-2 rounded-md'>AllChats</button>
 
 </div>
 
