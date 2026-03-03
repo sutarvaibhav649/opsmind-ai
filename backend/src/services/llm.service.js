@@ -13,12 +13,11 @@ export async function generateStreamingAnswer(contextChunks, query) {
     }
 
     const contextText = contextChunks.map(c => c.text).join("\n\n");
-    
-    // Define system prompt INSIDE the function where contextText is available
+
     const systemPrompt = `You are OpsMind AI, an internal knowledge assistant.
 RULES:
 1. ONLY answer using the provided context documents
-2. If the answer is NOT in the context, say EXACTLY: "I don't have information about that in your uploaded documents."
+2. If the answer is NOT in the context, say EXACTLY: "I don't have information about that in your uploaded documents. and Dont't site the source document for this case"
 3. Do not make up information or use external knowledge
 4. Be concise and professional
 5. Always cite the source document and page number
@@ -39,7 +38,6 @@ Question: ${query}`;
                     role: "system",
                     content: systemPrompt
                 }
-                // Don't send separate user message since context is already in system prompt
             ]
         },
         headers: {

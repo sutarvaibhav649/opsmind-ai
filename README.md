@@ -11,8 +11,8 @@
   <img src="https://img.shields.io/badge/PRs-welcome-brightgreen" />
   <img src="https://img.shields.io/badge/MongoDB-Atlas-47A248" />
   <img src="https://img.shields.io/badge/React-18.2-61DAFB" />
-  <img src="https://img.shields.io/badge/Node.js-18.x-339933" />
-  <img src="https://img.shields.io/badge/Gemini-1.5%20Flash-4285F4" />
+  <img src="https://img.shields.io/badge/Node.js-20.x-339933" />
+  <img src="https://img.shields.io/badge/OpenRouter-LLM-4285F4" />
 </p>
 
 ---
@@ -22,23 +22,21 @@
 - [Tech Stack](#tech-stack)
 - [Getting Started for Contributors](#getting-started-for-contributors)
   - [Prerequisites](#prerequisites)
-  - [Repository Setup](#repository-setup)
   - [Forking the Repository](#forking-the-repository)
   - [Cloning Your Fork](#cloning-your-fork)
   - [Setting Up Upstream](#setting-up-upstream)
   - [Branching Strategy](#branching-strategy)
-  - [Making Your First Commit](#making-your-first-commit)
 - [Development Setup](#development-setup)
-  - [Backend Setup](#backend-setup)
-  - [Frontend Setup](#frontend-setup)
+  - [Docker Setup (Recommended)](#docker-setup-recommended)
+  - [Local Setup (Alternative)](#local-setup-alternative)
   - [Environment Variables](#environment-variables)
 - [Project Structure](#project-structure)
 - [Team Workflow](#team-workflow)
   - [Daily Workflow](#daily-workflow)
+  - [Making Your First Commit](#making-your-first-commit)
   - [Creating a Pull Request](#creating-a-pull-request)
   - [Code Review Process](#code-review-process)
-- [Week-wise Tasks](#week-wise-tasks)
-- [Docker Setup](#docker-setup)
+- [Features Completed](#features-completed)
 - [Troubleshooting](#troubleshooting)
 - [Communication Guidelines](#communication-guidelines)
 - [License](#license)
@@ -47,15 +45,18 @@
 
 ## 🎯 Project Overview
 
-OpsMind AI is an intelligent knowledge assistant that helps employees instantly find answers from corporate documents (HR policies, SOPs, manuals, etc.). It uses RAG (Retrieval Augmented Generation) to provide accurate, cited answers with a critical "hallucination guardrail" - the AI will explicitly say "I don't know" if the answer isn't in the knowledge base.
+OpsMind AI is an intelligent knowledge assistant that helps employees instantly find answers from corporate documents (HR policies, SOPs, manuals, etc.). It uses RAG (Retrieval Augmented Generation) to provide accurate, cited answers with a critical **"hallucination guardrail"** - the AI will explicitly say "I don't know" if the answer isn't in the knowledge base.
 
-**Key Features:**
-- 📄 PDF document ingestion
-- 🔍 Semantic search using vector embeddings
-- 💬 Real-time chat with streaming responses
-- 📚 Precise citations with source and page numbers
-- 📊 Admin dashboard with knowledge graph analytics
-- 🛡️ Hallucination guardrail for reliable answers
+### Key Features:
+| Feature | Description |
+|---------|-------------|
+| 📄 **Document Ingestion** | Upload PDF documents (Admin only) |
+| 🔍 **Semantic Search** | Vector embeddings for intelligent retrieval |
+| 💬 **Real-time Chat** | Streaming responses with typing indicator |
+| 📚 **Precise Citations** | Source documents, page numbers, confidence scores |
+| 📊 **Admin Dashboard** | Knowledge graph with usage analytics |
+| 🛡️ **Hallucination Guardrail** | "I don't know" for out-of-scope questions |
+| 👥 **Role-Based Access** | Admins upload, all users query |
 
 ---
 
@@ -63,11 +64,12 @@ OpsMind AI is an intelligent knowledge assistant that helps employees instantly 
 
 | Layer | Technology | Purpose |
 |-------|------------|---------|
-| **Frontend** | React, Tailwind CSS, EventSource | Chat UI, streaming, admin dashboard |
-| **Backend** | Node.js, Express, Multer | API routes, file uploads |
+| **Frontend** | React 18, Tailwind CSS, Vite | Chat UI, streaming, admin dashboard |
+| **Backend** | Node.js 20, Express, Multer | API routes, file uploads |
 | **Database** | MongoDB Atlas + Vector Search | Document storage, vector similarity |
-| **AI/ML** | Gemini 1.5 Flash, text-embedding-004 | Response generation, embeddings |
-| **Queue** | BullMQ + Redis | Background job processing |
+| **AI/ML** | OpenRouter (LLaMA 3.1), text-embedding-3-small | Response generation, embeddings |
+| **Queue** | BullMQ + Redis (Memurai for Windows) | Background PDF processing |
+| **Auth** | JWT, bcrypt | Authentication, role management |
 | **DevOps** | Docker, Docker Compose | Containerization, deployment |
 
 ---
@@ -81,35 +83,28 @@ Before you begin, ensure you have the following installed:
 | Tool | Version | Download |
 |------|---------|----------|
 | **Git** | 2.30+ | [Download](https://git-scm.com/downloads) |
-| **Node.js** | 18.x | [Download](https://nodejs.org/) |
-| **npm** | 9.x | Comes with Node.js |
-| **Docker** | 24.x | [Download](https://www.docker.com/products/docker-desktop) |
+| **Docker Desktop** | 24.x+ | [Download](https://www.docker.com/products/docker-desktop) |
+| **Node.js** | 20.x | [Download](https://nodejs.org/) (for local setup) |
+| **Memurai** | Latest | [Download](https://www.memurai.com/) (Windows Redis alternative) |
 | **MongoDB Compass** | Latest | [Download](https://www.mongodb.com/products/compass) (Optional) |
-| **Redis Insight** | Latest | [Download](https://redis.com/redis-enterprise/redis-insight/) (Optional) |
 
 ### Repository Setup
 
 #### Step 1: Accept GitHub Invitation
 
-You should receive an email invitation to join the repository as a contributor. If you haven't received it:
-
-1. Check your email (including spam folder)
-2. Contact the team lead if you don't see the invitation
-3. Once invited, click "Accept invitation"
+1. Check your email for the GitHub invitation
+2. Click "Accept invitation"
+3. You'll get access to the repository
 
 #### Step 2: Fork the Repository
 
-Forking creates your own copy of the repository where you can make changes without affecting the main project.
+**Using GitHub Website:**
+1. Go to: `https://github.com/sutarvaibhav649/opsmind-ai`
+2. Click the **Fork** button (top-right)
+3. Select your GitHub account
+4. Wait for fork to complete
 
-**Option A: Using GitHub Website**
-
-1. Go to the repository: `https://github.com/sutarvaibhav649/opsmind-ai`
-2. Click the **Fork** button (top-right corner)
-3. Select your personal GitHub account as the destination
-4. Wait for the fork to complete
-
-**Option B: Using GitHub CLI**
-
+**Using GitHub CLI:**
 ```bash
-# Install GitHub CLI first, then run:
-gh repo fork sutarvaibhav649/opsmind-ai --clone=false
+gh repo fork sutarvaibhav649/opsmind-ai --clone=true
+
