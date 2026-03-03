@@ -1,5 +1,7 @@
 import { FileText, ExternalLink, ChevronDown } from "lucide-react";
-import { useState } from "react";
+import { useState } from "react"; // ADD THIS IMPORT
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 const ChatMessages = ({ query, answer, citations = [], isStreaming }) => {
     const [showAllSources, setShowAllSources] = useState(false);
@@ -27,8 +29,24 @@ const ChatMessages = ({ query, answer, citations = [], isStreaming }) => {
                     )}
                 </p>
                 
-                <div className="text-gray-200 leading-relaxed whitespace-pre-wrap">
-                    {answer || (isStreaming ? "Thinking..." : "")}
+                {/* FIXED: Use ReactMarkdown to render the answer */}
+                <div className="text-gray-200 leading-relaxed prose prose-invert max-w-none">
+                    <ReactMarkdown 
+                        remarkPlugins={[remarkGfm]}
+                        components={{
+                            // Custom styling for markdown elements
+                            strong: ({node, ...props}) => <strong className="text-blue-400 font-bold" {...props} />,
+                            h1: ({node, ...props}) => <h1 className="text-xl font-bold text-white mb-2" {...props} />,
+                            h2: ({node, ...props}) => <h2 className="text-lg font-bold text-white mb-2" {...props} />,
+                            h3: ({node, ...props}) => <h3 className="text-md font-bold text-white mb-1" {...props} />,
+                            p: ({node, ...props}) => <p className="mb-2 text-gray-200" {...props} />,
+                            ul: ({node, ...props}) => <ul className="list-disc list-inside mb-2 text-gray-200" {...props} />,
+                            ol: ({node, ...props}) => <ol className="list-decimal list-inside mb-2 text-gray-200" {...props} />,
+                            li: ({node, ...props}) => <li className="mb-1" {...props} />,
+                        }}
+                    >
+                        {answer || (isStreaming ? "Thinking..." : "")}
+                    </ReactMarkdown>
                 </div>
                 
                 {citations.length > 0 && (

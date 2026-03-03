@@ -1,4 +1,3 @@
-// services/retrieval.service.js
 import { generateEmbedding } from "./embedding.service.js";
 import Chunk from "../models/chunk.model.js";
 import mongoose from "mongoose";
