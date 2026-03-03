@@ -66,7 +66,7 @@ const FilesPanel = ({ files = [], isAdmin = false, onFileUpload }) => {
                             >
                                 <div className="flex flex-col">
                                     <div className="flex items-center gap-1">
-                                        <FileText size={12} className="text-blue-400 flex-shrink-0" />
+                                        <FileText size={12} className="text-blue-400 shrink-0" />
                                         <span className='text-gray-200 font-medium truncate' title={file.name}>
                                             {file.name}
                                         </span>
@@ -81,7 +81,7 @@ const FilesPanel = ({ files = [], isAdmin = false, onFileUpload }) => {
                                                 file.status === 'failed' ? 'text-red-400' : 
                                                 'text-yellow-400'
                                             }`}>
-                                                {file.status === 'processed' ? '✓ Ready' : file.status}
+                                                {file.status === 'processed' ? 'Ready' : file.status}
                                             </span>
                                         )}
                                     </div>
@@ -105,7 +105,7 @@ const FilesPanel = ({ files = [], isAdmin = false, onFileUpload }) => {
             {!isAdmin && files.length > 0 && (
                 <div className="p-3 border-t border-gray-800 bg-[#0a1a3a]">
                     <div className="flex items-start gap-2">
-                        <Shield size={12} className="text-blue-400 mt-0.5 flex-shrink-0" />
+                        <Shield size={12} className="text-blue-400 mt-0.5 shrink-0" />
                         <p className="text-[10px] text-gray-400">
                             You're in read-only mode. You can view and query these documents.
                         </p>

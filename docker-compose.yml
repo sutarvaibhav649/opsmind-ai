@@ -1,26 +1,22 @@
-# docker-compose.yml
 version: '3.8'
 
 services:
-  # REMOVE the redis service - you're using Memurai on host
-  
-  # Backend API
+
   backend:
     build: ./backend
     container_name: opsmind-backend
     restart: unless-stopped
     ports:
       - "5000:5000"
-    # Remove depends_on for redis
     environment:
       - NODE_ENV=development
       - PORT=5000
-      - MONGODB_URI=mongodb+srv://sutarvaibhav649_db_user:opsmind-ai-db@cluster0.3iqwwur.mongodb.net/?appName=cluster0
-      - REDIS_HOST=host.docker.internal  
-      - REDIS_PORT=6379
+      - MONGODB_URI=${MONGODB_URI}
+      - REDIS_HOST=${REDIS_HOST}  
+      - REDIS_PORT=${REDIS_PORT}
       - REDIS_PASSWORD=
-      - JWT_SECRET=k0PU1dQWdQCeJLPGO+KLllq9WOFCp75dH+8O8W1DG7I=
-      - OPENROUTER_API_KEY=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
+      - JWT_SECRET=${JWT_SECRET}
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
     volumes:
       - ./backend:/app
       - /app/node_modules
@@ -28,9 +24,8 @@ services:
     networks:
       - opsmind-network
     extra_hosts:
-      - "host.docker.internal:host-gateway"  # For Windows to access host
+      - "host.docker.internal:host-gateway" 
 
-  # Frontend (unchanged)
   frontend:
     build: ./frontend
     container_name: opsmind-frontend
