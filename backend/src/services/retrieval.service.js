@@ -17,7 +17,7 @@ export async function retrieveTopChunks(query, userId) {
             }
         },
         {
-            // FIX: Post-filter by userId so each user only sees their own documents
+            
             $match: {
                 userId: new mongoose.Types.ObjectId(userId)
             }

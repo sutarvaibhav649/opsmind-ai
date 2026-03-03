@@ -12,7 +12,6 @@ function ChatPage() {
     const [loadingHistory, setLoadingHistory] = useState(false);
     const chatEndRef = useRef(null);
 
-    // FIX: Load chat history whenever the active session changes
     useEffect(() => {
         if (!sessionId) return;
 
@@ -21,7 +20,7 @@ function ChatPage() {
             setMessages([]);
             try {
                 const history = await getSessionMessages(sessionId);
-                // Convert DB messages (role/content) to UI format (query/answer pairs)
+                
                 const paired = [];
                 for (let i = 0; i < history.length; i++) {
                     if (history[i].role === "user") {
@@ -32,7 +31,7 @@ function ChatPage() {
                             answer: assistantMsg?.content || "",
                             citations: assistantMsg?.citations || []
                         });
-                        i++; // skip the assistant message we just consumed
+                        i++;
                     }
                 }
                 setMessages(paired);
@@ -62,7 +61,6 @@ function ChatPage() {
         setIsStreaming(true);
 
         try {
-            // FIX: Pass sessionId so the backend scopes retrieval to this user's docs
             const response = await streamChat(userText, sessionId);
             if (!response.ok) throw new Error("Failed to connect");
 
@@ -103,7 +101,7 @@ function ChatPage() {
                                             ...msg,
                                             answer: data.answer || accumulatedAnswer,
                                             citations: data.citations || []
-                                          }
+                                        }
                                         : msg
                                 )
                             );

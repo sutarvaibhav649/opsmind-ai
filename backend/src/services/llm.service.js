@@ -18,7 +18,6 @@ export async function generateStreamingAnswer(contextChunks, query) {
         method: "post",
         url: "https://openrouter.ai/api/v1/chat/completions",
         data: {
-            // Free models on OpenRouter — falls back down the list if one is unavailable
             model: "meta-llama/llama-3.1-8b-instruct",
             stream: true,
             messages: [
@@ -35,7 +34,7 @@ export async function generateStreamingAnswer(contextChunks, query) {
         headers: {
             Authorization: `Bearer ${apiKey}`,
             "Content-Type": "application/json",
-            "HTTP-Referer": "http://localhost:5173",   // Required by OpenRouter
+            "HTTP-Referer": "http://localhost:5173",   
             "X-Title": "OpsMind-AI"
         },
         responseType: "stream"
@@ -59,7 +58,7 @@ export async function generateStreamingAnswer(contextChunks, query) {
                                 null;
                             if (token) yield token;
                         } catch (e) {
-                            // Skip malformed lines
+                            console.log(e)
                         }
                     }
                 }

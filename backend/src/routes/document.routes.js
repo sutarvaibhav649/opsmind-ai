@@ -14,7 +14,6 @@ router.post(
     handleMulterError
 );
 
-// FIX: Only return documents that belong to the logged-in user
 router.get("/all", protect, async (req, res) => {
     try {
         const documents = await Document.find({ userId: req.user.userId })
@@ -25,7 +24,6 @@ router.get("/all", protect, async (req, res) => {
     }
 });
 
-// DELETE /api/documents/:id — let a user delete their own document
 router.delete("/:id", protect, async (req, res) => {
     try {
         const doc = await Document.findOneAndDelete({

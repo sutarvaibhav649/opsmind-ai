@@ -1,7 +1,6 @@
 import mongoose from "mongoose";
 
 const chunkSchema = new mongoose.Schema({
-    // FIX: userId scopes vector search results to only the querying user's documents
     userId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",

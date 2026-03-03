@@ -1,6 +1,6 @@
 import Leftbar from "./Components/Leftbar";
-import Middlebar from "./Components/Middlebar";
-import Rightbar from "./Components/Rightbar";
+import Middlebar from "./components/Middlebar";
+import Rightbar from "./components/Rightbar";
 
 
 const MainLayout = () => {
@@ -11,11 +11,11 @@ const MainLayout = () => {
       </div>
 
       <div className="flex flex-1 bg-blue-300 p-4">
-       <Middlebar />
+        <Middlebar />
       </div>
 
       <div className="w-64 bg-blue-400 p-4">
-         <Rightbar />
+          <Rightbar />
       </div>
     </div>
   );

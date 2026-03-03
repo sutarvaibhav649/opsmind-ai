@@ -17,7 +17,7 @@ const ChatMessages = ({ query, answer, citations = [], isStreaming }) => {
                 </p>
                 <div className="text-gray-200 leading-relaxed">
                     {answer}
-                    {/* FIX: isStreaming cursor only shown when this specific message is streaming */}
+
                     {isStreaming && <span className="animate-pulse ml-1">▍</span>}
                 </div>
 

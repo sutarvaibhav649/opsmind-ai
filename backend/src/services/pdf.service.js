@@ -1,7 +1,5 @@
 import PDFParser from "pdf2json";
 
-// FIX: Returns array of { pageNumber, text } instead of one big string
-// This allows each chunk to be tagged with the correct page number
 export async function extractText(filePath) {
     return new Promise((resolve, reject) => {
         const pdfParser = new PDFParser();
@@ -24,7 +22,7 @@ export async function extractText(filePath) {
                 });
 
                 pages.push({
-                    pageNumber: index + 1,   // 1-based page number
+                    pageNumber: index + 1,   
                     text: pageText.trim()
                 });
             });

@@ -20,10 +20,8 @@ const worker = new Worker(
         const { documentId, userId, filePath, originalName } = job.data;
 
         try {
-            // FIX: extractText now returns { pages: [{pageNumber, text}], totalPages }
             const { pages, totalPages } = await extractText(filePath);
 
-            // FIX: chunkText receives pages array, returns chunks with correct pageNumber
             const chunks = chunkText(pages);
 
             for (const chunk of chunks) {
@@ -33,7 +31,7 @@ const worker = new Worker(
                     documentId,
                     text: chunk.text,
                     chunkIndex: chunk.chunkIndex,
-                    pageNumber: chunk.pageNumber,   // FIX: was always hardcoded to 1
+                    pageNumber: chunk.pageNumber, 
                     embedding,
                     metadata: { filename: originalName }
                 });

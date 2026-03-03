@@ -4,13 +4,11 @@ import ChatPage from './pages/ChatPage';
 import FilesPanel from './components/FilesPanel';
 
 const Dashboard = () => {
-    // 1. All shared data lives here
     const [sessions, setSessions] = useState([
         { id: 1, title: "My First Chat" }
     ]);
     const [uploadedFiles, setUploadedFiles] = useState([]);
 
-    // 2. Handler for File Uploads
     const handleFileUpload = (file) => {
         const newFile = {
             id: Date.now(),
@@ -20,7 +18,6 @@ const Dashboard = () => {
         setUploadedFiles((prev) => [...prev, newFile]);
     };
 
-    // 3. Handler for New Chat sessions
     const handleNewChat = () => {
         const newSession = {
             id: Date.now(),

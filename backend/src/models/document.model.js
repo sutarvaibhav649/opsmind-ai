@@ -2,7 +2,6 @@ import mongoose from "mongoose";
 
 const documentSchema = new mongoose.Schema(
     {
-        // FIX: Link every document to the user who uploaded it
         userId: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",

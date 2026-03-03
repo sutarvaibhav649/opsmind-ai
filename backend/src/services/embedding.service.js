@@ -5,8 +5,6 @@ dotenv.config({
     path:"./.env"
 });
 
-// FIX: text-embedding-3-small is an OpenAI model — OpenRouter does not proxy
-// OpenAI embedding endpoints. Use the OpenAI API directly.
 export async function generateEmbedding(text) {
     const apiKey = process.env.OPENROUTER_API_KEY;
 
@@ -17,7 +15,7 @@ export async function generateEmbedding(text) {
     const response = await axios.post(
         "https://openrouter.ai/api/v1/embeddings",
         {
-            model: "openai/text-embedding-3-small",  // Free tier on OpenRouter
+            model: "openai/text-embedding-3-small",  
             input: text
         },
         {

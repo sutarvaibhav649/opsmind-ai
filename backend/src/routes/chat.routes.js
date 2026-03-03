@@ -6,7 +6,6 @@ import ChatSession from "../models/chatSession.model.js";
 
 const router = express.Router();
 
-// GET /api/chat/sessions — list all sessions for the logged-in user
 router.get("/sessions", protect, async (req, res) => {
     try {
         const sessions = await ChatSession.find(
@@ -20,7 +19,6 @@ router.get("/sessions", protect, async (req, res) => {
     }
 });
 
-// POST /api/chat/sessions — create a new session
 router.post("/sessions", protect, async (req, res) => {
     try {
         const session = await ChatSession.create({
@@ -34,7 +32,6 @@ router.post("/sessions", protect, async (req, res) => {
     }
 });
 
-// PATCH /api/chat/sessions/:sessionId/title — rename a session
 router.patch("/sessions/:sessionId/title", protect, async (req, res) => {
     try {
         const session = await ChatSession.findOneAndUpdate(
@@ -49,7 +46,6 @@ router.patch("/sessions/:sessionId/title", protect, async (req, res) => {
     }
 });
 
-// DELETE /api/chat/sessions/:sessionId — delete a session
 router.delete("/sessions/:sessionId", protect, async (req, res) => {
     try {
         await ChatSession.findOneAndDelete({
@@ -62,7 +58,7 @@ router.delete("/sessions/:sessionId", protect, async (req, res) => {
     }
 });
 
-// GET /api/chat/sessions/:sessionId/messages — load history for a session
+
 router.get("/sessions/:sessionId/messages", protect, async (req, res) => {
     try {
         const session = await ChatSession.findOne({
@@ -76,7 +72,6 @@ router.get("/sessions/:sessionId/messages", protect, async (req, res) => {
     }
 });
 
-// POST /api/chat/query — streaming RAG query, scoped to user + session
 router.post("/query", protect, async (req, res) => {
     res.setHeader("Content-Type", "text/event-stream");
     res.setHeader("Cache-Control", "no-cache");
@@ -91,17 +86,14 @@ router.post("/query", protect, async (req, res) => {
     }
 
     try {
-        // FIX: Verify the session belongs to this user
         const session = await ChatSession.findOne({ _id: sessionId, userId });
         if (!session) {
             res.write(`data: ${JSON.stringify({ type: "error", message: "Session not found" })}\n\n`);
             return res.end();
         }
 
-        // FIX: Save the user's message to the session immediately
         session.messages.push({ role: "user", content: query });
 
-        // FIX: Retrieve only THIS user's chunks
         const chunks = await retrieveTopChunks(query, userId);
 
         if (!chunks.length) {
@@ -118,7 +110,6 @@ router.post("/query", protect, async (req, res) => {
             return res.end();
         }
 
-        // Stream the answer token by token
         const stream = await generateStreamingAnswer(chunks, query);
         let fullAnswer = "";
 
@@ -133,10 +124,9 @@ router.post("/query", protect, async (req, res) => {
             score: c.score
         }));
 
-        // FIX: Save the assistant's answer + citations to the session
         session.messages.push({ role: "assistant", content: fullAnswer, citations });
 
-        // Auto-title the session from the first user message
+
         if (session.messages.length <= 3 && session.title === "New Chat") {
             session.title = query.slice(0, 50) + (query.length > 50 ? "..." : "");
         }

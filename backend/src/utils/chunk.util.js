@@ -3,7 +3,7 @@ export function chunkText(pages, chunkSize = 1000, overlap = 200) {
     let chunkIndex = 0;
 
     for (const { pageNumber, text } of pages) {
-        if (!text.trim()) continue;   // skip blank pages
+        if (!text.trim()) continue;   
 
         let start = 0;
 
@@ -15,7 +15,7 @@ export function chunkText(pages, chunkSize = 1000, overlap = 200) {
                 chunks.push({
                     text: chunkContent,
                     chunkIndex: chunkIndex++,
-                    pageNumber   // ← correct page number for every chunk
+                    pageNumber  
                 });
             }
 

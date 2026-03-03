@@ -4,7 +4,7 @@ const authHeaders = () => ({
     Authorization: `Bearer ${localStorage.getItem("token")}`
 });
 
-// ─── Documents ────────────────────────────────────────────────────────────────
+//  Documents 
 
 export async function getDocuments() {
     const res = await fetch(`${API_BASE}/api/documents/all`, {
@@ -20,7 +20,7 @@ export const uploadDocument = async (file) => {
 
     const res = await fetch(`${API_BASE}/api/documents/upload`, {
         method: "POST",
-        headers: authHeaders(),   // FIX: auth header was missing in original
+        headers: authHeaders(),  
         body: formData,
     });
 
@@ -37,7 +37,7 @@ export const deleteDocument = async (documentId) => {
     return res.json();
 };
 
-// ─── Chat Sessions ────────────────────────────────────────────────────────────
+//  Chat Sessions 
 
 export async function getSessions() {
     const res = await fetch(`${API_BASE}/api/chat/sessions`, {
@@ -84,9 +84,8 @@ export async function getSessionMessages(sessionId) {
     return res.json();
 }
 
-// ─── Streaming Chat ───────────────────────────────────────────────────────────
+// Streaming Chat 
 
-// FIX: Now requires sessionId so the server can scope retrieval and save history
 export const streamChat = async (query, sessionId) => {
     return fetch(`${API_BASE}/api/chat/query`, {
         method: "POST",
