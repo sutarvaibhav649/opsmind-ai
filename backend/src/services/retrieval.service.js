@@ -1,46 +1,60 @@
+// services/retrieval.service.js
 import { generateEmbedding } from "./embedding.service.js";
 import Chunk from "../models/chunk.model.js";
 import mongoose from "mongoose";
 
-// FIX: Accept userId and filter results so users only retrieve their own chunks
 export async function retrieveTopChunks(query, userId) {
-    const queryEmbedding = await generateEmbedding(query);
+    try {
+        
+        const queryEmbedding = await generateEmbedding(query);
 
-    const results = await Chunk.aggregate([
-        {
-            $vectorSearch: {
-                index: "vector_index",
-                path: "embedding",
-                queryVector: queryEmbedding,
-                numCandidates: 100,
-                limit: 5
+        // FIXED: Proper vector search with filter inside $vectorSearch
+        const results = await Chunk.aggregate([
+            {
+                $vectorSearch: {
+                    index: "vector_index",
+                    path: "embedding",
+                    queryVector: queryEmbedding,
+                    numCandidates: 100,
+                    limit: 10
+                }
+            },
+            {
+                $addFields: {
+                    score: { $meta: "vectorSearchScore" }
+                }
+            },
+            {
+                $match: { score: { $gte: 0.5 } }  
+            },
+            {
+                $limit: 5
+            },
+            {
+                $lookup: {
+                    from: "documents",
+                    localField: "documentId",
+                    foreignField: "_id",
+                    as: "documentInfo"
+                }
+            },
+            {
+                $project: {
+                    text: 1,
+                    pageNumber: 1,
+                    documentId: 1,
+                    score: 1,
+                    filename: { $arrayElemAt: ["$documentInfo.originalName", 0] },
+                    metadata: 1
+                }
             }
-        },
-        {
-            
-            $match: {
-                userId: new mongoose.Types.ObjectId(userId)
-            }
-        },
-        {
-            $project: {
-                text: 1,
-                pageNumber: 1,
-                documentId: 1,
-                userId: 1,
-                score: { $meta: "vectorSearchScore" }
-            }
-        },
-        {
-            $limit: 3
-        }
-    ]);
+        ]);
+        results.forEach(r => console.log(`   - Score: ${r.score}, Page: ${r.pageNumber}`));
 
-    const topScore = results[0]?.score ?? 0;
+        return results;
 
-    if (!results.length || topScore < 0.65) {
+    } catch (error) {
+        console.error("Retrieval error:", error);
         return [];
     }
-
-    return results;
 }

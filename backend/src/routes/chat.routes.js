@@ -80,6 +80,7 @@ router.post("/query", protect, async (req, res) => {
     const { query, sessionId } = req.body;
     const userId = req.user.userId;
 
+
     if (!query || !sessionId) {
         res.write(`data: ${JSON.stringify({ type: "error", message: "query and sessionId are required" })}\n\n`);
         return res.end();
@@ -92,48 +93,61 @@ router.post("/query", protect, async (req, res) => {
             return res.end();
         }
 
+        // Save user message
         session.messages.push({ role: "user", content: query });
-
         const chunks = await retrieveTopChunks(query, userId);
 
-        if (!chunks.length) {
-            const noDocAnswer = "I don't have any relevant information in your uploaded documents to answer that.";
-
-            session.messages.push({ role: "assistant", content: noDocAnswer, citations: [] });
+        if (!chunks || chunks.length === 0) {
+            const noAnswer = "I don't have any relevant information in your uploaded documents to answer that.";
+            
+            session.messages.push({ role: "assistant", content: noAnswer, citations: [] });
             await session.save();
-
-            res.write(`data: ${JSON.stringify({
-                type: "final",
-                answer: noDocAnswer,
-                citations: []
+            
+            res.write(`data: ${JSON.stringify({ 
+                type: "final", 
+                answer: noAnswer,
+                citations: [] 
             })}\n\n`);
             return res.end();
         }
-
         const stream = await generateStreamingAnswer(chunks, query);
+        
         let fullAnswer = "";
-
         for await (const token of stream) {
             fullAnswer += token;
             res.write(`data: ${JSON.stringify({ type: "token", token })}\n\n`);
         }
 
+        // Create citations with all metadata
         const citations = chunks.map(c => ({
             documentId: c.documentId,
-            pageNumber: c.pageNumber,
-            score: c.score
+            pageNumber: c.pageNumber || 1,
+            score: c.score,
+            filename: c.filename || 'GradX Report.pdf',
+            excerpt: c.text ? c.text.substring(0, 150) + '...' : ''
         }));
 
-        session.messages.push({ role: "assistant", content: fullAnswer, citations });
+        // Save assistant message with citations
+        session.messages.push({ 
+            role: "assistant", 
+            content: fullAnswer, 
+            citations: citations 
+        });
 
-
+        // Update session title if it's a new chat
         if (session.messages.length <= 3 && session.title === "New Chat") {
             session.title = query.slice(0, 50) + (query.length > 50 ? "..." : "");
         }
 
         await session.save();
 
-        res.write(`data: ${JSON.stringify({ type: "final", citations })}\n\n`);
+        // Send final message with citations
+        res.write(`data: ${JSON.stringify({ 
+            type: "final", 
+            citations,
+            answer: fullAnswer 
+        })}\n\n`);
+        
         res.end();
 
     } catch (err) {

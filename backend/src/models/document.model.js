@@ -1,3 +1,4 @@
+// models/document.model.js - ADD uploader info
 import mongoose from "mongoose";
 
 const documentSchema = new mongoose.Schema(
@@ -7,6 +8,10 @@ const documentSchema = new mongoose.Schema(
             ref: "User",
             required: true,
             index: true
+        },
+        uploadedBy: {
+            type: String,  // Store email of uploader
+            required: true
         },
         filename: String,
         originalName: String,

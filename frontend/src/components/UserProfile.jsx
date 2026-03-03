@@ -7,12 +7,14 @@ const UserProfile = () => {
     return (
         <div className='w-full p-4 bg-[#11234a] border-t border-gray-700 flex flex-col gap-3'>
             <div className='flex items-center'>
-                <div className='h-8 w-8 rounded-full bg-white mr-3 overflow-hidden border border-black'>
+                <div className='h-8 w-8 rounded-full bg-white mr-3 overflow-hidden border border-black shrink-0'>
                     <img src="/vite.svg" alt="User" className="w-full h-full object-cover" />
                 </div>
-                <p className='text-sm truncate'>
-                    {user?.email || "Loading..."}
-                </p>
+                <div className="flex-1 min-w-0"> {/* Add min-w-0 for text truncation */}
+                    <p className='text-sm truncate' title={user?.email}>
+                        {user?.email || "Loading..."}
+                    </p>
+                </div>
             </div>
             <button
                 onClick={logout}

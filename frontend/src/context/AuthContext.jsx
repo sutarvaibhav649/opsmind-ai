@@ -16,11 +16,11 @@ export function AuthProvider({ children }) {
         }
     }, []);
 
-    const login = (jwtToken) => {
+    const login = (jwtToken, userData) => {
         localStorage.setItem("token", jwtToken);
         const decoded = jwtDecode(jwtToken);
         setToken(jwtToken);
-        setUser(decoded);
+        setUser({ ...decoded, ...userData }); // Include role
     };
 
     const logout = () => {
@@ -30,7 +30,13 @@ export function AuthProvider({ children }) {
     };
 
     return (
-        <AuthContext.Provider value={{ token, user, login, logout }}>
+        <AuthContext.Provider value={{ 
+            token, 
+            user, 
+            login, 
+            logout,
+            isAdmin: user?.role === 'admin'
+        }}>
             {children}
         </AuthContext.Provider>
     );

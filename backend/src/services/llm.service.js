@@ -2,7 +2,7 @@ import dotenv from 'dotenv'
 import axios from "axios";
 
 dotenv.config({
-    path:"./.env"
+    path: "./.env"
 });
 
 export async function generateStreamingAnswer(contextChunks, query) {
@@ -13,6 +13,20 @@ export async function generateStreamingAnswer(contextChunks, query) {
     }
 
     const contextText = contextChunks.map(c => c.text).join("\n\n");
+    
+    // Define system prompt INSIDE the function where contextText is available
+    const systemPrompt = `You are OpsMind AI, an internal knowledge assistant.
+RULES:
+1. ONLY answer using the provided context documents
+2. If the answer is NOT in the context, say EXACTLY: "I don't have information about that in your uploaded documents."
+3. Do not make up information or use external knowledge
+4. Be concise and professional
+5. Always cite the source document and page number
+
+Context from uploaded documents:
+${contextText}
+
+Question: ${query}`;
 
     const response = await axios({
         method: "post",
@@ -23,12 +37,9 @@ export async function generateStreamingAnswer(contextChunks, query) {
             messages: [
                 {
                     role: "system",
-                    content: "You are an internal knowledge assistant. Answer strictly using the provided context. If the answer is not found in the context, say \"I don't know based on the provided documents.\""
-                },
-                {
-                    role: "user",
-                    content: `Context:\n${contextText}\n\nQuestion:\n${query}`
+                    content: systemPrompt
                 }
+                // Don't send separate user message since context is already in system prompt
             ]
         },
         headers: {
@@ -58,7 +69,7 @@ export async function generateStreamingAnswer(contextChunks, query) {
                                 null;
                             if (token) yield token;
                         } catch (e) {
-                            console.log(e)
+                            console.log("Parse error:", e);
                         }
                     }
                 }

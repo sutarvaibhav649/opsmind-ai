@@ -1,8 +1,34 @@
-import { uploadDocument } from "../services/document.service.js";
+import Document from "../models/document.model.js";
+import { pdfQueue } from "../queues/pdf.queue.js";
 
+export async function uploadDocument(file, userId, userEmail) {
+    const document = await Document.create({
+        userId,
+        uploadedBy: userEmail, // Store who uploaded
+        filename: file.filename,
+        originalName: file.originalname,
+        mimeType: file.mimetype,
+        size: file.size
+    });
+
+    await pdfQueue.add("process-pdf", {
+        documentId: document._id,
+        userId,
+        filePath: file.path,
+        originalName: file.originalname
+    });
+
+    return document;
+}
+
+// Update the upload endpoint handler
 export async function upload(req, res) {
     try {
-        const document = await uploadDocument(req.file, req.user.userId);
+        const document = await uploadDocument(
+            req.file, 
+            req.user.userId,
+            req.user.email  // Pass user email
+        );
         res.status(201).json({
             documentId: document._id,
             status: document.status

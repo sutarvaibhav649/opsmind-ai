@@ -3,6 +3,8 @@ import cors from 'cors';
 import documentRoutes from "./routes/document.routes.js";
 import chatRoutes from "./routes/chat.routes.js";
 import authRoutes from "./routes/auth.routes.js";
+import adminRoutes from "./routes/admin.routes.js";
+
 import dotenv from "dotenv";
 
 dotenv.config({ path: "./.env" });
@@ -23,6 +25,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/api/documents", documentRoutes);
 app.use("/api/chat", chatRoutes);
 app.use("/api/auth", authRoutes);
+app.use("/api/admin", adminRoutes);
 
 // Error handler
 app.use((err, req, res, next) => {

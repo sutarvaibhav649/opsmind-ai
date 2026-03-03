@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Sidebar from "../components/sidebar/Sidebar";
 import FilesPanel from "../components/chat/FilesPanel";
 import { Outlet, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext"; 
 import {
     getDocuments,
     uploadDocument,
@@ -11,6 +12,7 @@ import {
 } from "../services/api";
 
 function AppLayout() {
+    const { isAdmin, user } = useAuth(); // Get admin status
     const [sessions, setSessions] = useState([]);
     const [activeSessionId, setActiveSessionId] = useState(null);
     const [uploadedFiles, setUploadedFiles] = useState([]);
@@ -30,7 +32,8 @@ function AppLayout() {
                     id: doc._id,
                     name: doc.originalName,
                     size: doc.size ? (doc.size / 1024).toFixed(2) + " KB" : "",
-                    status: doc.status
+                    status: doc.status,
+                    uploadedBy: doc.userId === user?.userId ? 'You' : 'Admin' // Optional: track who uploaded
                 })));
 
                 setSessions(sessionList);
@@ -93,7 +96,15 @@ function AppLayout() {
         );
     };
 
+    // Only admins can upload files
     const handleFileUpload = async (file) => {
+        // Check if user is admin before allowing upload
+        if (!isAdmin) {
+            console.error("Only admins can upload files");
+            alert("You don't have permission to upload files. Only admins can upload documents.");
+            return;
+        }
+
         try {
             const data = await uploadDocument(file);
             setUploadedFiles(prev => [
@@ -102,11 +113,13 @@ function AppLayout() {
                     name: file.name,
                     size: (file.size / 1024).toFixed(2) + " KB",
                     status: data.status,
+                    uploadedBy: 'You' // Mark as uploaded by current user
                 },
                 ...prev,
             ]);
         } catch (err) {
             console.error("Upload failed:", err);
+            alert("Upload failed: " + err.message);
         }
     };
 
@@ -131,10 +144,18 @@ function AppLayout() {
                 />
             </div>
             <div className="col-span-8 flex flex-col h-full overflow-hidden">
-                <Outlet context={{ handleFileUpload, activeSessionId }} />
+                <Outlet context={{ 
+                    handleFileUpload, 
+                    activeSessionId,
+                    isAdmin // Pass isAdmin to child components
+                }} />
             </div>
             <div className="col-span-2 border-l border-gray-700">
-                <FilesPanel files={uploadedFiles} />
+                <FilesPanel 
+                    files={uploadedFiles} 
+                    isAdmin={isAdmin} // Pass isAdmin to FilesPanel
+                    onFileUpload={handleFileUpload} // Pass upload handler
+                />
             </div>
         </div>
     );

@@ -17,13 +17,29 @@ export async function extractText(filePath) {
 
                 page.Texts.forEach(textItem => {
                     textItem.R.forEach(r => {
-                        pageText += decodeURIComponent(r.T) + " ";
+                        try {
+                            // Try to decode, but fallback to raw text if fails
+                            const decodedText = r.T ? decodeURIComponent(r.T) : '';
+                            pageText += decodedText + " ";
+                        } catch (e) {
+                            // If decode fails, use the raw text (might be already decoded)
+                            // or skip problematic characters
+                            const rawText = r.T || '';
+                            // Remove any problematic characters
+                            const cleanedText = rawText.replace(/[^\x20-\x7E]/g, '');
+                            pageText += cleanedText + " ";
+                        }
                     });
                 });
 
+                // Clean up the page text
+                pageText = pageText
+                    .replace(/\s+/g, ' ')  // Replace multiple spaces with single space
+                    .trim();
+
                 pages.push({
-                    pageNumber: index + 1,   
-                    text: pageText.trim()
+                    pageNumber: index + 1,
+                    text: pageText || `[Empty Page ${index + 1}]` // Fallback for empty pages
                 });
             });
 
