@@ -3,6 +3,7 @@ import { retrieveTopChunks } from "../services/retrieval.service.js";
 import { generateStreamingAnswer } from "../services/llm.service.js";
 import { protect } from "../middleware/auth.middleware.js";
 import ChatSession from "../models/chatSession.model.js";
+import QueryAnalytics from "../models/queryAnalytics.model.js";
 
 const router = express.Router();
 
@@ -73,6 +74,7 @@ router.get("/sessions/:sessionId/messages", protect, async (req, res) => {
 });
 
 router.post("/query", protect, async (req, res) => {
+
     res.setHeader("Content-Type", "text/event-stream");
     res.setHeader("Cache-Control", "no-cache");
     res.setHeader("Connection", "keep-alive");
@@ -80,6 +82,7 @@ router.post("/query", protect, async (req, res) => {
     const { query, sessionId } = req.body;
     const userId = req.user.userId;
 
+    const startTime = Date.now(); // Track response time
 
     if (!query || !sessionId) {
         res.write(`data: ${JSON.stringify({ type: "error", message: "query and sessionId are required" })}\n\n`);
@@ -87,7 +90,9 @@ router.post("/query", protect, async (req, res) => {
     }
 
     try {
+
         const session = await ChatSession.findOne({ _id: sessionId, userId });
+
         if (!session) {
             res.write(`data: ${JSON.stringify({ type: "error", message: "Session not found" })}\n\n`);
             return res.end();
@@ -95,66 +100,153 @@ router.post("/query", protect, async (req, res) => {
 
         // Save user message
         session.messages.push({ role: "user", content: query });
+
         const chunks = await retrieveTopChunks(query, userId);
 
+        // ------------------------------------
+        // CASE 1: NO DOCUMENTS FOUND
+        // ------------------------------------
         if (!chunks || chunks.length === 0) {
+
             const noAnswer = "I don't have any relevant information in your uploaded documents to answer that.";
-            
-            session.messages.push({ role: "assistant", content: noAnswer, citations: [] });
+
+            session.messages.push({
+                role: "assistant",
+                content: noAnswer,
+                citations: []
+            });
+
             await session.save();
-            
-            res.write(`data: ${JSON.stringify({ 
-                type: "final", 
+
+            // Save analytics
+            await QueryAnalytics.create({
+                userId,
+                query,
+                documentIds: [],
+                documentNames: [],
+                responseTime: Date.now() - startTime,
+                chunksRetrieved: 0,
+                confidence: 0,
+                timestamp: new Date()
+            });
+
+            res.write(`data: ${JSON.stringify({
+                type: "final",
                 answer: noAnswer,
-                citations: [] 
+                citations: []
             })}\n\n`);
+
             return res.end();
         }
+
+        // ------------------------------------
+        // STREAM AI RESPONSE
+        // ------------------------------------
+
         const stream = await generateStreamingAnswer(chunks, query);
-        
+
         let fullAnswer = "";
+
         for await (const token of stream) {
+
             fullAnswer += token;
-            res.write(`data: ${JSON.stringify({ type: "token", token })}\n\n`);
+
+            res.write(`data: ${JSON.stringify({
+                type: "token",
+                token
+            })}\n\n`);
+
         }
 
-        // Create citations with all metadata
+        // ------------------------------------
+        // CREATE CITATIONS
+        // ------------------------------------
+
         const citations = chunks.map(c => ({
             documentId: c.documentId,
             pageNumber: c.pageNumber || 1,
             score: c.score,
-            filename: c.filename || 'GradX Report.pdf',
-            excerpt: c.text ? c.text.substring(0, 150) + '...' : ''
+            filename: c.filename || "new_file.pdf",
+            excerpt: c.text ? c.text.substring(0, 150) + "..." : ""
         }));
 
-        // Save assistant message with citations
-        session.messages.push({ 
-            role: "assistant", 
-            content: fullAnswer, 
-            citations: citations 
+        // Save assistant message
+        session.messages.push({
+            role: "assistant",
+            content: fullAnswer,
+            citations: citations
         });
 
-        // Update session title if it's a new chat
+        // Update session title
         if (session.messages.length <= 3 && session.title === "New Chat") {
-            session.title = query.slice(0, 50) + (query.length > 50 ? "..." : "");
+
+            session.title =
+                query.slice(0, 50) +
+                (query.length > 50 ? "..." : "");
+
         }
 
         await session.save();
 
-        // Send final message with citations
-        res.write(`data: ${JSON.stringify({ 
-            type: "final", 
+        // ------------------------------------
+        // SAVE QUERY ANALYTICS
+        // ------------------------------------
+
+        try {
+
+            await QueryAnalytics.create({
+
+                userId: userId,
+
+                query: query,
+
+                documentIds: chunks.map(c => c.documentId),
+
+                documentNames: chunks.map(c => c.filename),
+
+                responseTime: Date.now() - startTime,
+
+                chunksRetrieved: chunks.length,
+
+                confidence: chunks.length
+                    ? chunks.reduce((sum, c) => sum + (c.score || 0), 0) / chunks.length
+                    : 0,
+
+                timestamp: new Date()
+
+            });
+
+        } catch (analyticsError) {
+
+            console.error("Analytics logging failed:", analyticsError);
+
+        }
+
+        // ------------------------------------
+        // FINAL RESPONSE
+        // ------------------------------------
+
+        res.write(`data: ${JSON.stringify({
+            type: "final",
             citations,
-            answer: fullAnswer 
+            answer: fullAnswer
         })}\n\n`);
-        
+
         res.end();
 
     } catch (err) {
+
         console.error("SSE ERROR:", err);
-        res.write(`data: ${JSON.stringify({ type: "error", message: err.message })}\n\n`);
+
+        res.write(`data: ${JSON.stringify({
+            type: "error",
+            message: err.message
+        })}\n\n`);
+
         res.end();
+
     }
+
 });
 
 export default router;
