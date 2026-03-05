@@ -10,7 +10,10 @@ const app = express();
 
 // Middleware
 app.use(cors({
-    origin: "*",
+    origin: [
+        "http://localhost:5173",
+        "https://opsmind-ai-aldl.onrender.com"
+    ],
     methods: ["GET","POST","PATCH","DELETE","PUT"],
     credentials: true
 }));
