@@ -6,7 +6,9 @@ import { extractText } from "../services/pdf.service.js";
 import { chunkText } from "../utils/chunk.util.js";
 import { generateEmbedding } from "../services/embedding.service.js";
 
-const connection = new IORedis(process.env.REDIS_URL);
+const connection = new IORedis(process.env.REDIS_URL, {
+    maxRetriesPerRequest: null
+});
 
 export const pdfQueue = new Queue("pdf-processing", { connection });
 
