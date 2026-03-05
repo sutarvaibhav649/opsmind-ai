@@ -25,7 +25,7 @@ function RegisterPage() {
     };
 
     return (
-        <div className="min-h-screen bg-[#2c2c2c] text-white flex flex-col">
+        <div className="min-h-screen bg-[#05122b] text-white flex flex-col">
             {/* Header */}
             <div className="p-4 text-sm font-semibold">
                 OpsMind-AI
@@ -35,7 +35,7 @@ function RegisterPage() {
             <div className="flex flex-1 items-center justify-center">
                 <form
                     onSubmit={handleSubmit}
-                    className="bg-[#3a3a3a] w-[320px] rounded-lg p-8 flex flex-col gap-4"
+                    className="bg-[#032257] w-[320px] rounded-lg p-8 flex flex-col gap-4"
                 >
                     <h2 className="text-center text-lg font-semibold mb-2">
                         Sign Up
@@ -44,7 +44,7 @@ function RegisterPage() {
                         <label className="text-xs">Email</label>
                         <input
                             type="email"
-                            className="bg-[#555] h-8 rounded px-2 text-sm outline-none"
+                            className="bg-[#05122b98] h-8 rounded px-2 text-sm outline-none"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                         />
@@ -53,19 +53,19 @@ function RegisterPage() {
                         <label className="text-xs">Password</label>
                         <input
                             type="password"
-                            className="bg-[#555] h-8 rounded px-2 text-sm outline-none"
+                            className="bg-[#05122b98] h-8 rounded px-2 text-sm outline-none"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                         />
                     </div>
-                    <button className="mt-2 bg-[#6b6b6b] hover:bg-[#7c7c7c] transition rounded-md py-1 text-sm">
+                    <button className="mt-2 bg-[#02112d] hover:bg-[#02112de1] transition rounded-md py-1 text-sm">
                         Sign Up
                     </button>
                     <p className="text-center text-xs mt-3">
                         Have an account?{" "}
                         <span
                             onClick={() => navigate("/login")}
-                            className="text-blue-400 cursor-pointer hover:underline"
+                            className="text-white cursor-pointer hover:underline"
                         >
                             Login
                         </span>
