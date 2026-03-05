@@ -51,60 +51,81 @@ const ChatMessages = ({ query, answer, citations = [], isStreaming }) => {
                 
                 {citations.length > 0 && (
                     <div className="mt-4 pt-4 border-t border-white/10">
-                        <div className="flex items-center justify-between mb-3">
-                            <div className="flex items-center gap-2">
-                                <FileText size={14} className="text-blue-400" />
-                                <span className="text-xs uppercase text-gray-400">Sources ({citations.length})</span>
-                            </div>
-                            {citations.length > 3 && (
-                                <button 
-                                    onClick={() => setShowAllSources(!showAllSources)}
-                                    className="text-xs text-blue-400 hover:text-blue-300 flex items-center gap-1"
-                                >
-                                    {showAllSources ? 'Show less' : 'View all'}
-                                    <ChevronDown size={12} className={`transform transition-transform ${showAllSources ? 'rotate-180' : ''}`} />
-                                </button>
-                            )}
-                        </div>
-                        
-                        <div className="space-y-2">
-                            {visibleCitations.map((cite, index) => (
-                                <div 
-                                    key={index}
-                                    className="bg-[#0a1a3a] p-3 rounded-lg border border-blue-500/20 hover:border-blue-500/40 transition-all group"
-                                >
-                                    <div className="flex items-start justify-between">
-                                        <div className="flex-1">
-                                            <div className="flex items-center gap-2 text-xs mb-1">
-                                                <span className="text-blue-400 font-mono">
-                                                    #{index + 1}
-                                                </span>
-                                                <span className="text-gray-400">
-                                                    {cite.filename || 'Document'} • Page {cite.pageNumber || 'N/A'}
-                                                </span>
-                                                <span className="text-green-400">
-                                                    {(cite.score * 100).toFixed(0)}% match
-                                                </span>
-                                            </div>
-                                            <p className="text-xs text-gray-300 line-clamp-2 group-hover:line-clamp-3 transition-all">
-                                                {cite.excerpt || cite.text?.substring(0, 150)}...
-                                            </p>
-                                        </div>
-                                        <button className="ml-2 p-1 hover:bg-blue-500/20 rounded">
-                                            <ExternalLink size={12} className="text-gray-400" />
-                                        </button>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                        
-                        {citations.length > 0 && (
-                            <div className="mt-3 text-[10px] text-gray-500 text-right">
-                                Confidence: {(citations.reduce((acc, c) => acc + (c.score || 0), 0) / citations.length * 100).toFixed(0)}% based on {citations.length} sources
-                            </div>
-                        )}
+
+                    {/* Sources label */}
+                    <div className="flex items-center gap-2 mb-2">
+                        <FileText size={14} className="text-blue-400"/>
+                        <span className="text-xs uppercase text-gray-400">
+                        Sources ({citations.length})
+                        </span>
                     </div>
-                )}
+
+                    {/* Citation chips */}
+                    <div className="flex flex-wrap gap-2">
+
+                        {visibleCitations.map((cite, index) => (
+
+                        <div key={index} className="relative group">
+
+                        {/* Chip */}
+                        <button
+                        className="px-2 py-1 text-[10px] font-mono
+                        bg-[#11234a] text-blue-300
+                        rounded-md hover:bg-[#1a3a7a]
+                        transition"
+                        >
+                        {index + 1}
+                        </button>
+
+                        {/* Tooltip */}
+                        <div className="
+                            absolute z-50
+                            hidden group-hover:block
+                            bottom-7 left-0
+                            w-50
+                            bg-[#0a1a3a]
+                            border border-blue-500/20
+                            rounded-md
+                            p-2
+                            text-xs
+                            text-gray-200
+                            shadow-lg
+                        ">
+
+                    <p className="font-semibold text-white truncate">
+                        {cite.filename || "Document"}
+                    </p>
+
+                    <p className="text-gray-400">
+                        Page {cite.pageNumber || "N/A"}
+                    </p>
+
+                    {cite.score && (
+                    <p className="text-green-400">
+                        Match {(cite.score * 100).toFixed(0)}%
+                    </p>
+                    )}
+
+                    </div>
+
+                    </div>
+
+                    ))}
+
+                    {/* Show remaining citations count */}
+                    {citations.length > 3 && !showAllSources && (
+                    <span
+                    onClick={() => setShowAllSources(true)}
+                    className="text-[10px] text-blue-400 cursor-pointer hover:text-blue-300"
+                    >
+                    +{citations.length - 3} more
+                    </span>
+                    )}
+
+                    </div>
+
+                    </div>
+                    )}
             </div>
         </div>
     );
