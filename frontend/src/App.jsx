@@ -1,10 +1,10 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import AppLayout from "./layouts/AppLayout";
 import ChatPage from "./pages/ChatPage";
-import DashboardPage from "./pages/DashboardPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
+import AdminDashboard from "./pages/AdminDashboard";
 
 function App() {
     return (
@@ -22,7 +22,7 @@ function App() {
                 {/* FIX: sessionId in URL so each session loads its own history */}
                 <Route path="/chat/:sessionId" element={<ChatPage />} />
                 <Route path="/chat" element={<ChatPage />} />
-                <Route path="/dashboard" element={<DashboardPage />} />
+                <Route path="/admin" element={<AdminDashboard />} />
             </Route>
         </Routes>
     );

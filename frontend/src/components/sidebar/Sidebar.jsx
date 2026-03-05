@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import AdminKnowledgeGraph from '../KnowledgeGraph';
 import { renameSession } from '../../services/api';
+import { LayoutDashboard } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 import {
     MessageSquare,
@@ -25,6 +27,7 @@ const Sidebar = ({
 
     const [editingId, setEditingId] = useState(null);
     const [tempTitle, setTempTitle] = useState("");
+    const navigate = useNavigate();
 
     const [deleteModal, setDeleteModal] = useState({
         open: false,
@@ -202,10 +205,26 @@ const Sidebar = ({
             {/* ADMIN ANALYTICS */}
 
             {isAdmin && (
+
                 <div className="p-2 border-t border-gray-800">
-                    <AdminKnowledgeGraph />
+
+                <p className="text-[10px] text-gray-500 uppercase tracking-wider mb-2 px-2">
+                Admin Tools
+                </p>
+
+                <button
+                onClick={() => navigate("/admin")}
+                className="w-full text-left p-2 rounded-lg text-xs text-gray-400 hover:bg-[#0a1a3a] flex items-center gap-2"
+                >
+                <LayoutDashboard size={12} />
+                Dashboard
+                </button>
+
                 </div>
-            )}
+
+                )}
+
+
 
             {/* LOGOUT */}
 
