@@ -4,7 +4,7 @@ import { pdfQueue } from "../queues/pdf.queue.js";
 export async function uploadDocument(file, userId, userEmail) {
     const document = await Document.create({
         userId,
-        uploadedBy: userEmail, // Store who uploaded
+        uploadedBy: userEmail, 
         filename: file.filename,
         originalName: file.originalname,
         mimeType: file.mimetype,
@@ -27,7 +27,7 @@ export async function upload(req, res) {
         const document = await uploadDocument(
             req.file, 
             req.user.userId,
-            req.user.email  // Pass user email
+            req.user.email  
         );
         res.status(201).json({
             documentId: document._id,

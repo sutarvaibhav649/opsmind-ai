@@ -10,7 +10,7 @@ const documentSchema = new mongoose.Schema(
             index: true
         },
         uploadedBy: {
-            type: String,  // Store email of uploader
+            type: String,  
             required: true
         },
         filename: String,

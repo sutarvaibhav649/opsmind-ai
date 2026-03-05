@@ -17,13 +17,12 @@ router.post(
     handleMulterError
 );
 
-// ALL authenticated users can see ALL documents (no userId filter)
+// ALL authenticated users can see ALL documents
 router.get("/all", protect, async (req, res) => {
     try {
-        // Remove the userId filter - show all documents to everyone
         const documents = await Document.find({})
             .sort({ createdAt: -1 })
-            .populate('userId', 'email'); // Optional: show who uploaded
+            .populate('userId', 'email'); 
         
         res.json(documents);
     } catch (err) {
@@ -32,10 +31,8 @@ router.get("/all", protect, async (req, res) => {
     }
 });
 
-// Only admins can delete documents
 router.delete("/:id", protect, requireAdmin, async (req, res) => {
     try {
-        // Also delete associated chunks
         await Chunk.deleteMany({ 
             documentId: req.params.id
         });
@@ -46,7 +43,6 @@ router.delete("/:id", protect, requireAdmin, async (req, res) => {
         
         if (!doc) return res.status(404).json({ error: "Document not found" });
         
-        // Optional: Delete physical file
         const filePath = path.join(__dirname, '../../uploads', doc.filename);
         if (fs.existsSync(filePath)) {
             fs.unlinkSync(filePath);
