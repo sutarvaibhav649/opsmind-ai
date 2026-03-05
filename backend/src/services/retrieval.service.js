@@ -24,7 +24,7 @@ export async function retrieveTopChunks(query, userId) {
                 }
             },
             {
-                $match: { score: { $gte: 0.5 } }  
+                $match: { score: { $gte: 0.6 } }  
             },
             {
                 $limit: 5
