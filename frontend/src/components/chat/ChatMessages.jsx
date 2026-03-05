@@ -1,33 +1,81 @@
-import { FileText, ExternalLink, ChevronDown } from "lucide-react";
+import { FileText, ExternalLink, ChevronDown, Copy, RotateCcw } from "lucide-react";
 import { useState } from "react"; // ADD THIS IMPORT
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
-const ChatMessages = ({ query, answer, citations = [], isStreaming }) => {
+const ChatMessages = ({
+                        query,
+                        answer,
+                        citations = [],
+                        isStreaming,
+                        onRegenerate
+                    }) => {
     const [showAllSources, setShowAllSources] = useState(false);
     const visibleCitations = showAllSources ? citations : citations.slice(0, 3);
+
+    const copyToClipboard = async (text) => {
+        try {
+            await navigator.clipboard.writeText(text);
+        } catch (err) {
+            console.error("Copy failed:", err);
+        }
+    };
     
     return (
         <div className="flex flex-col gap-4 w-full py-4">
             {/* User message */}
             <div className="flex justify-end">
-                <div className="w-[70%] p-3 rounded-xl bg-[#091837] border border-white/5">
-                    <p className="text-gray-200">{query}</p>
+                <div className="w-[70%] p-3 rounded-xl bg-[#091837] border border-white/5 group">
+                    <div className="flex items-start justify-between gap-2">
+                        <p className="text-gray-200 flex-1">{query}</p>
+
+                        <button
+                        onClick={() => copyToClipboard(query)}
+                        className="opacity-0 group-hover:opacity-100 transition"
+                        >
+                        <Copy size={14} className="text-gray-400 hover:text-white"/>
+                        </button>
+                        </div>
                 </div>
             </div>
             
             {/* Assistant message */}
             <div className="bg-[#091837] p-4 rounded-xl border border-white/5">
-                <p className="text-xs text-blue-400 font-bold uppercase mb-2 flex items-center gap-2">
-                    <span>AI Assistant</span>
-                    {isStreaming && (
+                <div className="flex items-center justify-between mb-2">
+
+                    <div className="flex items-center gap-2 text-xs text-blue-400 font-bold uppercase">
+
+                        <span>AI Assistant</span>
+
+                        {isStreaming && (
                         <span className="flex gap-1">
-                            <span className="w-1 h-1 bg-blue-400 rounded-full animate-bounce" style={{animationDelay: '0ms'}} />
-                            <span className="w-1 h-1 bg-blue-400 rounded-full animate-bounce" style={{animationDelay: '150ms'}} />
-                            <span className="w-1 h-1 bg-blue-400 rounded-full animate-bounce" style={{animationDelay: '300ms'}} />
+                        <span className="w-1 h-1 bg-blue-400 rounded-full animate-bounce"/>
+                        <span className="w-1 h-1 bg-blue-400 rounded-full animate-bounce" style={{animationDelay:'150ms'}}/>
+                        <span className="w-1 h-1 bg-blue-400 rounded-full animate-bounce" style={{animationDelay:'300ms'}}/>
                         </span>
-                    )}
-                </p>
+                        )}
+
+                    </div>
+
+                    <div className="flex items-center gap-3">
+
+                        <button
+                            onClick={() => copyToClipboard(answer)}
+                            className="text-gray-400 hover:text-white"
+                            >
+                            <Copy size={14}/>
+                        </button>
+
+                        <button
+                                onClick={onRegenerate}
+                                className="text-gray-400 hover:text-white"
+                                >
+                                <RotateCcw size={14}/>
+                        </button>
+
+                    </div>
+
+                </div>
                 
                 {/* FIXED: Use ReactMarkdown to render the answer */}
                 <div className="text-gray-200 leading-relaxed prose prose-invert max-w-none">

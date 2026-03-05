@@ -121,7 +121,9 @@ function ChatPage() {
 
         setIsStreaming(false);
     };
-
+    const regenerateAnswer = async (query) => {
+        await handleSendMessage(query);
+    };
     return (
         <div className="flex flex-col h-full bg-[#05122b]">
             <div className="flex-1 overflow-y-auto px-6 py-4">
@@ -141,6 +143,7 @@ function ChatPage() {
                             answer={msg.answer}
                             citations={msg.citations}
                             isStreaming={isStreaming && index === messages.length - 1}
+                            onRegenerate={() => regenerateAnswer(msg.query)}
                         />
                     ))
                 )}
