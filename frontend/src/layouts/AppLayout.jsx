@@ -72,19 +72,31 @@ function AppLayout() {
     };
 
     const handleDeleteSession = async (sessionId) => {
-        try {
-            await deleteSession(sessionId);
-            const remaining = sessions.filter(s => s._id !== sessionId);
-            setSessions(remaining);
 
+        try {
+
+            await deleteSession(sessionId);
+
+            const updatedSessions = sessions.filter(
+                s => s._id !== sessionId
+            );
+
+            setSessions(updatedSessions);
+
+            // If active chat deleted → switch chat
             if (activeSessionId === sessionId) {
-                if (remaining.length > 0) {
-                    setActiveSessionId(remaining[0]._id);
-                    navigate(`/chat/${remaining[0]._id}`);
+
+                if (updatedSessions.length > 0) {
+
+                    setActiveSessionId(updatedSessions[0]._id);
+                    navigate(`/chat/${updatedSessions[0]._id}`);
+
                 } else {
+
                     await handleNewChat();
                 }
             }
+
         } catch (err) {
             console.error("Failed to delete session:", err);
         }
