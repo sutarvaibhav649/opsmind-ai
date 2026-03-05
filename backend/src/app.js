@@ -12,7 +12,9 @@ const app = express();
 app.use(cors({
     origin: [
         "http://localhost:5173",
-        "https://opsmind-ai-aldl.onrender.com"
+        "https://opsmind-ai-aldl.onrender.com",
+        "https://opsmind-ai-lemon.vercel.app/",
+        "https://*.vercel.app/"
     ],
     methods: ["GET","POST","PATCH","DELETE","PUT"],
     credentials: true
