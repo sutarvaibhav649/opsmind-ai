@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY package*.json ./
 
-RUN npm ci
+RUN npm ci --only=production
 
 COPY . .
 
@@ -12,4 +12,4 @@ RUN mkdir -p uploads
 
 EXPOSE 5000
 
-CMD ["npm", "run", "dev"]
+CMD ["npm","start"]
