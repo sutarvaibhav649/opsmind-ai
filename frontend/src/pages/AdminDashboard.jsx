@@ -52,17 +52,17 @@ function AdminDashboard() {
         {/* KPI CARDS */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
 
-            <div className="bg-[#122855] p-4 rounded-lg mb-2.5h">
+            <div className="bg-[#122855] p-4 rounded-lg mr-2.5">
                 <p className="text-sm text-gray-400">Total queries</p>
                 <h2 className="text-2xl font-bold">{data?.overview?.totalQueries || 0}</h2>
             </div>
 
-            <div className="bg-[#122855] p-4 rounded-lg">
+            <div className="bg-[#122855] p-4 rounded-lg mr-2.5">
                 <p className="text-sm text-gray-400">Unique Users</p>
                 <h2 className="text-2xl font-bold">{data?.overview?.totalUsers || 0}</h2>
             </div>
 
-            <div className="bg-[#122855] p-4 rounded-lg">
+            <div className="bg-[#122855] p-4 rounded-lg mr-2.5">
                 <p className="text-sm text-gray-400">Documents</p>
                 <h2 className="text-2xl font-bold">{data?.overview?.totalDocuments || 0}</h2>
             </div>
@@ -76,7 +76,7 @@ function AdminDashboard() {
 
 
         {/* CHART + DOCUMENT USAGE */}
-        <div className="grid grid-cols-1 lg:grid-cols-3">
+        <div className="grid grid-cols-1 lg:grid-cols-3 mt-2.5">
 
             {/* Query Chart */}
             <div className="col-span-2 bg-[#122855] p-4 rounded-lg">
@@ -89,7 +89,7 @@ function AdminDashboard() {
 
 
             {/* Document Usage */}
-            <div className="bg-[#122855] p-4 rounded-lg">
+            <div className="bg-[#122855] p-4 rounded-lg ml-2 ">
 
                 <h2 className="text-lg font-semibold mb-4">
                     Document Usage
@@ -138,7 +138,7 @@ function AdminDashboard() {
 
 
         {/* TABLE */}
-        <div className="bg-[#122855] p-4 rounded-lg overflow-x-auto">
+        <div className="bg-[#122855] p-4 rounded-lg overflow-x-auto mt-2">
 
             <table className="w-full text-sm">
 
