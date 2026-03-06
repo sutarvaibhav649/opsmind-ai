@@ -196,42 +196,45 @@ import {
 
     return (
 
-        <div className="grid grid-cols-12 h-screen bg-[#0F172A] text-gray-100 overflow-hidden">
+        <div className="grid grid-cols-12 lg:grid-cols-12 md:grid-cols-12 sm:grid-cols-1 h-screen bg-[#0F172A] text-gray-100 overflow-hidden">
 
-        <div className="col-span-2 border-r border-gray-700">
+            {/* Sidebar */}
+            <div className="hidden md:block md:col-span-3 lg:col-span-2 border-r border-gray-700">
 
-            <Sidebar
-            sessions={sessions}
-            activeSessionId={activeSessionId}
-            onNewChat={handleNewChat}
-            onSelectSession={handleSelectSession}
-            onDeleteSession={handleDeleteSession}
-            onSessionRenamed={handleSessionRenamed}
-            />
+                <Sidebar
+                    sessions={sessions}
+                    activeSessionId={activeSessionId}
+                    onNewChat={handleNewChat}
+                    onSelectSession={handleSelectSession}
+                    onDeleteSession={handleDeleteSession}
+                    onSessionRenamed={handleSessionRenamed}
+                />
 
-        </div>
+            </div>
 
-        <div className="col-span-8 flex flex-col h-full overflow-hidden">
+            {/* Main Content */}
+            <div className="col-span-1 md:col-span-9 lg:col-span-8 flex flex-col h-full overflow-y-auto">
 
-            <Outlet
-            context={{
-                handleFileUpload,
-                activeSessionId,
-                isAdmin
-            }}
-            />
+                <Outlet
+                    context={{
+                        handleFileUpload,
+                        activeSessionId,
+                        isAdmin
+                    }}
+                />
 
-        </div>
+            </div>
 
-        <div className="col-span-2 border-l border-gray-700">
+            {/* Files Panel */}
+            <div className="hidden lg:block lg:col-span-2 border-l border-gray-700">
 
-            <FilesPanel
-            files={uploadedFiles}
-            isAdmin={isAdmin}
-            onFileUpload={handleFileUpload}
-            />
+                <FilesPanel
+                    files={uploadedFiles}
+                    isAdmin={isAdmin}
+                    onFileUpload={handleFileUpload}
+                />
 
-        </div>
+            </div>
 
         </div>
 

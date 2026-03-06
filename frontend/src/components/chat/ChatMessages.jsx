@@ -25,7 +25,7 @@ const ChatMessages = ({
         <div className="flex flex-col gap-4 w-full py-4">
             {/* User message */}
             <div className="flex justify-end">
-                <div className="w-[70%] p-3 rounded-xl bg-[#091837] border border-white/5 group">
+                <div className="w-full md:w-[70%] p-3 rounded-xl bg-[#091837] border border-white/5 group">
                     <div className="flex items-start justify-between gap-2">
                         <p className="text-gray-200 flex-1">{query}</p>
 
